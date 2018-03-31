@@ -8,13 +8,7 @@
       </span>
     </div>
     <div class="kanban-card-description">{{ card.title }}</div>
-    <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length > 0">
-      <span>
-        <template v-for="label of card.labels">
-          🏷 {{label.name}}
-        </template>
-      </span>
-    </div>
+    <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length > 0"><span>{{ formatCardLabels() }}</span></div>
   </div>
 </template>
 
@@ -66,6 +60,13 @@ export default {
       } else {
         return ''
       }
+    },
+    formatCardLabels () {
+      var labels = []
+      for (var label of this.card.labels) {
+        labels.push('🏷 ' + label.name)
+      }
+      return labels.join(' ')
     },
     cardStyle () {
       return {
