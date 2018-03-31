@@ -36,44 +36,60 @@ export default {
       }
       this.search_source = this.$axios.CancelToken.source()
 
-      var repoOwner = 'karmakaze'
-      var repoName = 'ZenBoard'
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
       var authorization = 'token 5ae22a48ecb6d0b77c3564952b6da29648d2f7f1'
 
-      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues',
+      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all',
                       { headers: { 'Authorization': authorization },
                         cancelToken: this.search_source.token })
                  .then(response => {
-                    var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
                     var issues = response.data
+                    var closedIssues = []
+                    var assignedIssues = []
+                    var otherIssues = []
                     for (var issue of issues) {
                       console.log('ISSUE: {')
                       for (var kv of Object.entries(issue)) {
                         console.log('  ' + kv[0] + ': ' + JSON.stringify(kv[1]))
                       }
                       console.log('}')
-                      issue.bgcolor = colors[Math.floor(Math.random() * colors.length)]
+                      if (issue.state === 'closed') {
+                        closedIssues.push(issue)
+                      } else if (issue.assignee !== null) {
+                        assignedIssues.push(issue)
+                      } else {
+                        otherIssues.push(issue)
+                      }
                     }
                     this.columns = [
                       { name: 'Backlog',
-                        cards: issues
+                        cards: otherIssues
                       },
                       { name: 'Ready',
-                        cards: issues
+                        cards: []
                       },
                       { name: 'In-progress',
-                        cards: issues
+                        cards: assignedIssues
                       },
                       { name: 'Done',
-                        cards: issues
+                        cards: closedIssues
                       },
                       { name: 'Archived',
-                        cards: issues
+                        cards: []
                       }]
                    })
+                   this.dragulaContainers(this)
     },
     selected (item) {
       this.selecteditem = item
+    },
+    dragulaContainers (vue) {
+      setTimeout(() => {
+        Object.values(document.querySelectorAll('.kanban-column')).forEach(c => {
+          vue.$drake.containers.push(c)
+        })
+      }, 500)
     }
   }
 }

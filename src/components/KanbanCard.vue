@@ -1,14 +1,28 @@
 <template>
   <div class="kanban-card" :style="cardStyle()">
-    <div class="kanban-card-title" :style="titleStyle()"><span>{{ card.number }}</span> <span>({{ card.number || '0.5' }})</span> <span>{{ card.title }}</span></div>
+    <div class="kanban-card-title" :style="titleStyle()"><span>{{ card.number }}</span> <span>{{ card.size || '' }}</span>
+      <span v-if="card.assignee" style="float: right">
+        <span style="vertical-align: top">{{ card.assignee.login }}</span>
+        <img :src="card.assignee.avatar_url" style="height: 1.4em"/>
+      </span>
+    </div>
     <div class="kanban-card-description">{{ card.title }}</div>
-    <div class="kanban-card-footer" :style="footerStyle()"><span>🏷 tag 🏷 label</span></div>
+    <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length > 0">
+      <span>
+        <template v-for="label of card.labels">
+          🏷 {{label.name}}
+        </template>
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   props: ['card'],
+  created () {
+    this.init()
+  },
   data () {
     return {
       selecteditem: {}
@@ -17,6 +31,21 @@ export default {
   methods: {
     selected (item) {
       this.selecteditem = item
+    },
+    init () {
+      var sizes = ['small', 'medium', 'large', 'xlarge']
+      for (var label of this.card.labels) {
+        if (label.color) {
+          this.card.bgcolor = '#' + label.color
+        }
+        if (label.name.startsWith('size-')) {
+          this.card.size = '(' + label.name.substring(5) + ')'
+        } else if (sizes.includes(label.name.toLowerCase())) {
+          this.card.size = '(' + label.name.substring(0, 1) + ')'
+        }
+      }
+      var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
+      this.card.bgcolor = colors[this.card.number % colors.length]
     },
     cardStyle () {
       return {
