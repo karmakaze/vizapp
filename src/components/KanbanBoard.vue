@@ -45,9 +45,10 @@ export default {
                         cancelToken: this.search_source.token })
                  .then(response => {
                     var issues = response.data
-                    var closedIssues = []
-                    var assignedIssues = []
                     var otherIssues = []
+                    var assignedIssues = []
+                    var closedIssues = []
+                    var archivedIssues = []
                     for (var issue of issues) {
                       console.log('ISSUE: {')
                       for (var kv of Object.entries(issue)) {
@@ -55,8 +56,12 @@ export default {
                       }
                       console.log('}')
                       if (issue.state === 'closed') {
-                        closedIssues.push(issue)
-                      } else if (issue.assignee !== null) {
+                        if (issue.labels.find(l => l.name == 'archived')) {
+                          archivedIssues.push(issue)
+                        } else {
+                          closedIssues.push(issue)
+                        }
+                      } else if (issue.assignee) {
                         assignedIssues.push(issue)
                       } else {
                         otherIssues.push(issue)
@@ -76,7 +81,7 @@ export default {
                         cards: closedIssues
                       },
                       { name: 'Archived',
-                        cards: []
+                        cards: archivedIssues
                       }]
                    })
                    this.dragulaContainers(this)
