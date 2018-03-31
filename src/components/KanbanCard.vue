@@ -1,6 +1,7 @@
 <template>
   <div class="kanban-card" :style="cardStyle()">
-    <div class="kanban-card-title" :style="titleStyle()"><span>{{ card.number }}</span> <span>{{ card.size || '' }}</span>
+    <div class="kanban-card-title" :style="titleStyle()">
+      <span>{{ card.number }}</span> <span>{{ formatCardSize(card.size) }}</span> <span><a target="issue_page" :href="cardIssueUrl()" style="color: #303030">↗github</a></span>
       <span v-if="card.assignee" style="float: right">
         <span style="vertical-align: top">{{ card.assignee.login }}</span>
         <img :src="card.assignee.avatar_url" style="height: 1.4em"/>
@@ -39,15 +40,31 @@ export default {
           this.card.bgcolor = '#' + label.color
         }
         if (label.name.startsWith('size-')) {
-          this.card.size = '(' + label.name.substring(5) + ')'
+          this.card.size = label.name.substring(5)
         } else if (sizes.includes(label.name.toLowerCase())) {
-          this.card.size = '(' + label.name.substring(0, 1) + ')'
+          this.card.size = label.name.substring(0, 1)
         }
       }
       // var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
       // this.card.bgcolor = colors[this.card.number % colors.length]
       if (!this.card.bgcolor) {
         this.card.bgcolor = '#e0e0e0'
+      }
+    },
+    cardIssueUrl() {
+      return this.card.url.replace(/^.*api\.github\.com\/repos\/(.*)$/, 'https://github.com/$1')
+    },
+    formatCardSize() {
+      if ([1, '1', 's'].includes(this.card.size)) {
+        return '𝍠'
+      } else if ([2, '2', 'm'].includes(this.card.size)) {
+        return '𝍡'
+      } else if ([3, '3', 'l'].includes(this.card.size)) {
+        return '𝍢'
+      } else if ([4, '4', 'x'].includes(this.card.size) || (typeof this.card.size === 'number' && this.card.size > 3)) {
+        return '𝍣'
+      } else {
+        return ''
       }
     },
     cardStyle () {
@@ -174,10 +191,10 @@ export default {
 
 a {
   text-decoration: none;
-  color: #0000e0;
+  color: #6040f0;
 }
 a:visited {
-  color: #8000e0;
+  color: #6040f0;
 }
 ul {
   margin-top: 2px;
