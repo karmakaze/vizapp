@@ -1,7 +1,7 @@
 <template>
   <div class="kanban-card" :style="cardStyle()">
     <div class="kanban-card-title" :style="titleStyle()">
-      <span>{{ card.number }}</span> <span>{{ formatCardSize(card.size) }}</span> <span><a target="issue_page" :href="cardIssueUrl()" style="color: #303030">↗github</a></span>
+      <span style="margin-left: 0.2em; font-weight: bold">{{ card.number }}</span> <span>{{ formatCardSize(card.size) }}</span> <span><a target="github_issues" :href="cardIssueUrl()" style="color: #303030">↗github</a></span>
       <span v-if="card.assignee" style="float: right">
         <span style="vertical-align: top">{{ card.assignee.login }}</span>
         <img :src="card.assignee.avatar_url" style="height: 1.4em"/>

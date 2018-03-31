@@ -1,7 +1,7 @@
 <template>
   <div class="kanban-board" style="width: 100%; display: flex; flex-direction: row;">
     <template v-for="(column, i) of columns">
-      <kanban-column :column="column" :add="i == 0" :key="column.name" style="flex: 1;"></kanban-column>
+      <kanban-column :column="column" :add="i == 0 ? newIssueUrl() : ''" :key="column.name" style="flex: 1;"></kanban-column>
     </template>
   </div>
 </template>
@@ -39,7 +39,12 @@ export default {
     }
   },
   methods: {
-    search: function (name) {
+    newIssueUrl () {
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
+      return 'https://github.com/' + repoOwner + '/' + repoName + '/issues/new'
+    },
+    search (name) {
       if (this.search_source) {
         this.search_source.cancel('cancel search due to newer request')
         this.search_source = null
@@ -109,21 +114,40 @@ export default {
                     for (var milestoneTitle of Object.keys(milestoneIssues).sort()) {
                       readyIssues.push(...milestoneIssues[milestoneTitle])
                     }
+
+                    var priortize = function(issues) {
+                      var highs = []
+                      var mids = []
+                      var lows = []
+                      for (var issue of issues) {
+                        if (issue.labels.find(l => l.name === '@high')) {
+                          highs.push(issue)
+                        } else if (issue.labels.find(l => l.name === '@low')) {
+                          lows.push(issue)
+                        } else {
+                          mids.push(issue)
+                        }
+                      }
+                      highs.push(...mids)
+                      highs.push(...lows)
+                      return highs
+                    }
+
                     this.columns = [
                       { name: 'Backlog',
-                        cards: backlogIssues
+                        cards: priortize(backlogIssues)
                       },
                       { name: 'Ready',
-                        cards: readyIssues
+                        cards: priortize(readyIssues)
                       },
                       { name: 'In-progress',
-                        cards: assignedIssues
+                        cards: priortize(assignedIssues)
                       },
                       { name: 'Done',
-                        cards: closedIssues
+                        cards: priortize(closedIssues)
                       },
                       { name: 'Archived',
-                        cards: archivedIssues
+                        cards: priortize(archivedIssues)
                       }]
                    })
                    this.dragulaContainers(this)

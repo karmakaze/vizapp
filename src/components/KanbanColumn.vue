@@ -1,6 +1,10 @@
 <template>
   <div class="kanban-title-column">
-    <div style="text-align: center;"><span v-if="add" class="add">+</span>{{column.name}}</div>
+    <div style="text-align: center;">
+      <span v-if="add" class="add" style="margin-left: 0.5em"><a :href="add" target="github_issues">[+]</a></span>
+      <span>{{ column.name }}</span>
+      <span v-if="add" style="margin-left: 0.5em; color: white">[+]</span>
+    </div>
     <div class="kanban-column" :style="style()">
       <template v-for="card of column.cards">
         <kanban-card :card="card" :key="card.number"/>
@@ -24,7 +28,7 @@ export default {
     }
   },
   methods: {
-    search: function (column) {
+    search (column) {
       if (this.search_source) {
         this.search_source.cancel('cancel search due to newer request')
         this.search_source = null
