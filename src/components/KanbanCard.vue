@@ -35,7 +35,7 @@ export default {
     init () {
       var sizes = ['small', 'medium', 'large', 'xlarge']
       for (var label of this.card.labels) {
-        if (label.color) {
+        if (label.color && label.color !== 'ffffff') {
           this.card.bgcolor = '#' + label.color
         }
         if (label.name.startsWith('size-')) {
@@ -44,8 +44,11 @@ export default {
           this.card.size = '(' + label.name.substring(0, 1) + ')'
         }
       }
-      var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
-      this.card.bgcolor = colors[this.card.number % colors.length]
+      // var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
+      // this.card.bgcolor = colors[this.card.number % colors.length]
+      if (!this.card.bgcolor) {
+        this.card.bgcolor = '#e0e0e0'
+      }
     },
     cardStyle () {
       return {
