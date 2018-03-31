@@ -29,7 +29,7 @@ Object.defineProperty(Vue.prototype, '$dragula', { value: dragula })
 Object.defineProperty(Vue.prototype, '$drake', { value: drake })
 
 drake.on('drop', (el, target, source, sibiling) => {
-    console.log('dropped element [' + el.textContent + '] into [' + target.parentElement.firstChild.textContent + '] from ' + source.parentElement.firstChild.textContent + ' before: ' + (sibiling === null ? null : sibiling.textContent))
+    // console.log('dropped element [' + el.textContent + '] into [' + target.parentElement.firstChild.textContent + '] from ' + source.parentElement.firstChild.textContent + ' before: ' + (sibiling === null ? null : sibiling.textContent))
     // var cardVue = el.__vue__
     // var targetVue = target.parentElement.__vue__
     // console.log('card vue style: ' + JSON.stringify(cardVue.style()))

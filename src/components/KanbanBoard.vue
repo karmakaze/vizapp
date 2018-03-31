@@ -7,6 +7,16 @@
 </template>
 
 <script>
+const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(location.hostname)
+function debug (line) {
+  if (isLocalHost) {
+    if (typeof line === 'function') {
+      line = line()
+    }
+    console.log(line)
+  }
+}
+
 export default {
   created () {
     this.search(this.terms)
@@ -38,41 +48,73 @@ export default {
 
       var repoOwner = this.$route.params.repoOwner
       var repoName = this.$route.params.repoName
-      var authorization = 'token 5ae22a48ecb6d0b77c3564952b6da29648d2f7f1'
+      var authorization = null
+      if (document.cookie) {
+        var getCookie = function (name) {
+          var parts = ("; " + document.cookie).split("; " + name + "=")
+          return parts.length === 2 ? parts[1].split(";")[0] : ''
+        }
+        authorization = getCookie('ghat')
+      } else {
+        alert("During development you have to set the 'ghat' cookie for localhost:8080")
+      }
 
       this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all',
                       { headers: { 'Authorization': authorization },
                         cancelToken: this.search_source.token })
                  .then(response => {
                     var issues = response.data
-                    var otherIssues = []
+                    var backlogIssues = []
+                    var milestoneIssues = {}
                     var assignedIssues = []
                     var closedIssues = []
                     var archivedIssues = []
                     for (var issue of issues) {
-                      console.log('ISSUE: {')
-                      for (var kv of Object.entries(issue)) {
-                        console.log('  ' + kv[0] + ': ' + JSON.stringify(kv[1]))
-                      }
-                      console.log('}')
+                      debug(() => {
+                        var lines = []
+                        lines.push('ISSUE: {')
+                        for (var kv of Object.entries(issue)) {
+                          if (kv[1] === null || typeof kv[1] !== 'object') {
+                            lines.push('  ' + kv[0] + ': ' + JSON.stringify(kv[1]))
+                          } else {
+                            var keys = JSON.stringify(Object.keys(kv[1]))
+                            keys = keys.replace('["', '{').replace(/","/g, ', ').replace('"]', '}')
+                            lines.push('  ' + kv[0] + ': ' + keys)
+                          }
+                        }
+                        lines.push('}')
+                        return lines.join('\n')
+                      })
                       if (issue.state === 'closed') {
-                        if (issue.labels.find(l => l.name == 'archived')) {
+                        if ((issue.milestone && issue.milestone.state === 'closed') || issue.labels.find(l => l.name === 'archived')) {
                           archivedIssues.push(issue)
                         } else {
                           closedIssues.push(issue)
                         }
                       } else if (issue.assignee) {
                         assignedIssues.push(issue)
+                      } else if (issue.milestone) {
+                        if (issue.milestone.state === 'closed') {
+                          archivedIssues.push(issue)
+                        } else if (issue.milestone.title in milestoneIssues) {
+                          milestoneIssues[issue.milestone.title].push(issue)
+                        } else {
+                          milestoneIssues[issue.milestone.title] = [issue]
+                        }
                       } else {
-                        otherIssues.push(issue)
+                        backlogIssues.push(issue)
                       }
+                    }
+                    var readyIssues = []
+                    for (var milestoneTitle of Object.keys(milestoneIssues).sort()) {
+                      readyIssues.push(...milestoneIssues[milestoneTitle])
                     }
                     this.columns = [
                       { name: 'Backlog',
-                        cards: otherIssues
+                        cards: backlogIssues
                       },
                       { name: 'Ready',
-                        cards: []
+                        cards: readyIssues
                       },
                       { name: 'In-progress',
                         cards: assignedIssues
