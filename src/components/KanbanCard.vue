@@ -1,7 +1,7 @@
 <template>
   <div class="kanban-card" :style="cardStyle()">
-    <div class="kanban-card-title" :style="titleStyle()"><span>{{ card.fields.rank }}</span> <span>({{ card.fields.size || '0.5' }})</span> <span>{{ card.fields.title }}</span></div>
-    <div class="kanban-card-description">{{ card.fields.description }}</div>
+    <div class="kanban-card-title" :style="titleStyle()"><span>{{ card.number }}</span> <span>({{ card.number || '0.5' }})</span> <span>{{ card.title }}</span></div>
+    <div class="kanban-card-description">{{ card.title }}</div>
     <div class="kanban-card-footer" :style="footerStyle()"><span>🏷 tag 🏷 label</span></div>
   </div>
 </template>
@@ -20,19 +20,19 @@ export default {
     },
     cardStyle () {
       return {
-        'background-color': this.pastelize(this.card.fields.bgcolor),
-        'border': '2px solid ' + this.intensify(this.card.fields.bgcolor),
+        'background-color': this.pastelize(this.card.bgcolor),
+        'border': '2px solid ' + this.intensify(this.card.bgcolor),
         'border-radius': '4px'
       }
     },
     titleStyle() {
       return {
-        'background-color': this.card.fields.bgcolor
+        'background-color': this.card.bgcolor
       }
     },
     footerStyle () {
       return {
-        'border-top': '1px solid ' + this.intensify(this.card.fields.bgcolor)
+        'border-top': '1px solid ' + this.intensify(this.card.bgcolor)
       }
     },
     intensify (hashColor) {
@@ -104,8 +104,8 @@ export default {
       // var className = 'Card'
       var position = ''
       if (before !== null) {
-        // var beforeRank = before.fields.rank
-        position = '&beforeRank=' + before.fields.rank
+        // var beforeRank = before.rank
+        position = '&beforeRank=' + before.number
         this.update([{'class': 'Card', 'set': {'next_id': this.next_id}, 'where': {'next_id': this.id}},
                 {'class': 'Card', 'set': {'next_id': this.id}, 'where': {'next_id': before.id}},
                 {'class': 'Card', 'set': {'next_id': before.id}, 'where': {'id': this.id}}])

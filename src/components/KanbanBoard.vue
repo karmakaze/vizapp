@@ -35,11 +35,42 @@ export default {
         this.search_source = null
       }
       this.search_source = this.$axios.CancelToken.source()
-      var accountId = 3
-      var className = 'Column'
-      this.$axios.get('http://appdat.info:4123/api/objects/?account_id=' + accountId + '&project_id=' + this.$route.params.project_id + '&class=' + className,
-                      {cancelToken: this.search_source.token})
-                 .then(response => { this.columns = response.data.sort((a, b) => a.fields.rank - b.fields.rank) })
+
+      var repoOwner = 'karmakaze'
+      var repoName = 'ZenBoard'
+      var authorization = 'token 5ae22a48ecb6d0b77c3564952b6da29648d2f7f1'
+
+      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues',
+                      { headers: { 'Authorization': authorization },
+                        cancelToken: this.search_source.token })
+                 .then(response => {
+                    var colors = ['#c0c0c0', '#c0f0f0', '#f0c0f0', '#f0f0c0', '#f0c0c0', '#c0f0c0', '#c0c0f0']
+                    var issues = response.data
+                    for (var issue of issues) {
+                      console.log('ISSUE: {')
+                      for (var kv of Object.entries(issue)) {
+                        console.log('  ' + kv[0] + ': ' + JSON.stringify(kv[1]))
+                      }
+                      console.log('}')
+                      issue.bgcolor = colors[Math.floor(Math.random() * colors.length)]
+                    }
+                    this.columns = [
+                      { name: 'Backlog',
+                        cards: issues
+                      },
+                      { name: 'Ready',
+                        cards: issues
+                      },
+                      { name: 'In-progress',
+                        cards: issues
+                      },
+                      { name: 'Done',
+                        cards: issues
+                      },
+                      { name: 'Archived',
+                        cards: issues
+                      }]
+                   })
     },
     selected (item) {
       this.selecteditem = item

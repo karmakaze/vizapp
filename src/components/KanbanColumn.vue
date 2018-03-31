@@ -1,11 +1,9 @@
 <template>
   <div class="kanban-title-column">
-    <div style="text-align: center;"><span v-if="add" class="add">+</span>{{column.fields.name}}</div>
+    <div style="text-align: center;"><span v-if="add" class="add">+</span>{{column.name}}</div>
     <div class="kanban-column" :style="style()">
-      <template v-for="card of cards">
-        <template v-if="card.fields.status == column.fields.show_status">
-          <kanban-card :card="card" :key="card.id"/>
-        </template>
+      <template v-for="card of column.cards">
+        <kanban-card :card="card" :key="card.number"/>
       </template>
     </div>
   </div>
