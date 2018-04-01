@@ -1,15 +1,22 @@
 <template>
   <div class="kanban-title-column">
-    <div style="text-align: center;">
-      <span v-if="add" class="add" style="margin-left: 0.5em"><a :href="add" target="github_issues">[+]</a></span>
-      <span>{{ column.name }}</span>
-      <span v-if="add" style="margin-left: 0.5em; color: white">[+]</span>
-    </div>
-    <div class="kanban-column" :style="style()">
-      <template v-for="card of column.cards">
-        <kanban-card :card="card" :key="card.number"/>
-      </template>
-    </div>
+    <template v-if="column.collapsed">
+      <div v-if="add" style="margin-left: 0.5em"><a :href="add" target="github_issues">[+]</a></div>
+      <div class="collapsed" v-on:click="expandColumn()"><a :href="column.collapsed" target="github_issues" style="color: #606060">{{ column.name.toUpperCase().split('').join('\n') }}</a></div>
+    </template>
+
+    <template v-else>
+      <div style="text-align: center;">
+        <span v-if="add" class="add" style="margin-left: 0.5em"><a :href="add" target="github_issues">[+]</a></span>
+        <span style="font-weight: bold">{{ column.name }}</span>
+        <span v-if="add" style="margin-left: 0.5em; color: white">[+]</span>
+      </div>
+      <div class="kanban-column" :style="style()">
+        <template v-for="card of column.cards">
+          <kanban-card :card="card" :key="card.number"/>
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -28,6 +35,10 @@ export default {
     }
   },
   methods: {
+    expandColumn () {
+      var columnParam = this.column.name.toLowerCase()
+      location.href = location.href.replace(columnParam + '=0', columnParam + '=1')
+    },
     search (column) {
       if (this.search_source) {
         this.search_source.cancel('cancel search due to newer request')
@@ -47,7 +58,7 @@ export default {
     style () {
       return {
         width: this.width,
-        'min-height': '500px'
+        'min-height': '700px'
       }
     }
   }
@@ -55,6 +66,15 @@ export default {
 </script>
 
 <style scoped>
+.collapsed {
+  padding-top: 16em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  padding-bottom: 16em;
+  width: 1em;
+  font-weight: bold;
+  text-align: center;
+}
 .kanban-column {
   background-color: #fffdf8;
 }

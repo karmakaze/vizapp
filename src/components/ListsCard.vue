@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     item (option, value) {
-      console.log('item(option=' + option + ', value=' + JSON.stringify(value) + ')')
+      // console.log('item(option=' + option + ', value=' + JSON.stringify(value) + ')')
       return value
     },
     selected (item) {

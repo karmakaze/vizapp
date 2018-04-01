@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <div class="kanban-board" style="width: 100%; display: flex; flex-direction: row;">
       <template v-for="(column, i) of columns">
-        <kanban-column :column="column" :add="i == 0 ? newIssueUrl() : ''" :key="column.name" style="flex: 1;"></kanban-column>
+        <kanban-column :column="column" :add="i == 0 ? newIssueUrl() : ''" :key="column.name" :style="'flex: ' + (column.collapsed ? '0' : '1')"></kanban-column>
       </template>
     </div>
   </div>
@@ -44,6 +44,16 @@ export default {
       var repoName = this.$route.params.repoName
       return 'https://github.com/' + repoOwner + '/' + repoName + '/issues/new'
     },
+    backlogIssuesUrl () {
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
+      return 'https://github.com/' + repoOwner + '/' + repoName + '/issues?q=no:milestone+no:assignee'
+    },
+    archivedIssuesUrl () {
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
+      return 'https://github.com/' + repoOwner + '/' + repoName + '/issues?q=label:archived'
+    },
     load () {
       if (this.search_source) {
         this.search_source.cancel('cancel search due to newer request')
@@ -59,14 +69,21 @@ export default {
           var parts = ("; " + document.cookie).split("; " + name + "=")
           return parts.length === 2 ? parts[1].split(";")[0] : ''
         }
-        authorization = getCookie('ghat')
-      } else {
-        alert("This free version can only display public repositories e.g. https://kaizenboard.xyz/flutter/flutter")
+        var ghat = getCookie('ghat')
+        if (ghat) {
+          authorization = 'token ' + ghat
+        }
       }
 
-      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all&_=' + Date.now(),
-                      { headers: { 'Authorization': authorization },
-                        cancelToken: this.search_source.token })
+      var url = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all'
+      var headers = {}
+      if (authorization) {
+        headers = { 'Authorization': authorization }
+        url = url + '&_=' + Date.now()
+      }
+
+      this.$axios.get(url, { headers: headers,
+                             cancelToken: this.search_source.token })
                  .then(response => {
                     var issues = response.data
                     var backlogIssues = []
@@ -77,7 +94,7 @@ export default {
                     for (var issue of issues) {
                       debug(() => {
                         var lines = []
-                        lines.push('ISSUE: {')
+                        lines.push('ISSUE')
                         for (var kv of Object.entries(issue)) {
                           if (kv[1] === null || typeof kv[1] !== 'object') {
                             lines.push('  ' + kv[0] + ': ' + JSON.stringify(kv[1]))
@@ -87,9 +104,10 @@ export default {
                             lines.push('  ' + kv[0] + ': ' + keys)
                           }
                         }
-                        lines.push('}')
-                        return lines.join('\n')
+                        lines.push('')
+                        return lines.join('  |')
                       })
+
                       if (issue.state === 'closed') {
                         if ((issue.milestone && issue.milestone.state === 'closed') || issue.labels.find(l => l.name === 'archived')) {
                           archivedIssues.push(issue)
@@ -133,20 +151,33 @@ export default {
                       return highs
                     }
 
+                    // TODO: remove workaround vue-router 3.0.1 bug where this.$route.query is an empty object
+                    var search = location.search.startsWith('?') ? location.search.substring(1) : location.search
+                    var query = {}
+                    for (var kv of search.split('&')) {
+                      var parts = kv.split('=')
+                      query[parts[0]] = parts[1]
+                    }
+
                     this.columns = [
                       { name: 'Backlog',
+                        collapsed: query.backlog === '0' ? this.backlogIssuesUrl() : false,
                         cards: priortize(backlogIssues)
                       },
                       { name: 'Ready',
+                        collapsed: false,
                         cards: priortize(readyIssues)
                       },
                       { name: 'In-progress',
+                        collapsed: false,
                         cards: priortize(assignedIssues)
                       },
                       { name: 'Done',
+                        collapsed: false,
                         cards: priortize(closedIssues)
                       },
                       { name: 'Archived',
+                        collapsed: query.archived === '0' ? this.archivedIssuesUrl() : false,
                         cards: priortize(archivedIssues)
                       }]
                    })
