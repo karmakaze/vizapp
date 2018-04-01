@@ -1,6 +1,52 @@
-# zen-board
+# kaizenboard
 
-> ZenBoard
+> KaizenBoard
+
+## Usage
+
+Navigate to https://kaizenboard.xyz/#/repoOwner/repoName to display issues of repository github.com/repoOwner/repoName.
+
+### Options
+
+If the repo has many issues, each of the Backlog or Archived columms can be collapsed, e.g.
+
+```
+https://kaizenboard.xyz/?backlog=0#/repoOwner/repoName
+https://kaizenboard.xyz/?archived=0#/repoOwner/repoName
+https://kaizenboard.xyz/?backlog=0&archived=0#/repoOwner/repoName
+```
+
+Clicking on the blank space of the collapsed column expands it.
+
+
+## Column classification of Issues
+
+### Backlog
+- is:open
+- no:milestone
+
+### Ready
+- is:open
+- no:assignee
+
+### In-progress
+- is:open
+- assignee
+
+### Done
+- is:closed
+
+### Archived
+- label:archived
+OR
+- milestone is:closed
+
+
+### Ordering of Issues
+
+Issues with label:@high appear at the top of 'Backlog', 'Ready', and 'In-progress' columns.
+Issues with label:@low appear at the bottom of 'Backlog', 'Ready', and 'In-progress' columns.
+The 'Done' and 'Archived' columns show issues in reverse chronological order.
 
 ## Build Setup
 
