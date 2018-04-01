@@ -5,13 +5,11 @@ import App from './App'
 import router from './router'
 import SearchBar from '@/components/SearchBar'
 import SearchResult from '@/components/SearchResult'
-import RelationResult from '@/components/RelationResult'
-import SchemaResult from '@/components/SchemaResult'
-import ObjectResult from '@/components/ObjectResult'
 import ListDetail from '@/components/ListDetail'
 import ItemList from '@/components/ItemList'
 import ItemDetail from '@/components/ItemDetail'
 import TextValue from '@/components/TextValue'
+import KaizenBoard from '@/components/KaizenBoard'
 import KanbanBoard from '@/components/KanbanBoard'
 import KanbanColumn from '@/components/KanbanColumn'
 import KanbanCard from '@/components/KanbanCard'
@@ -42,14 +40,12 @@ Vue.config.productionTip = false
 
 Vue.component('search-bar', SearchBar)
 Vue.component('search-result', SearchResult)
-Vue.component('relation-result', RelationResult)
-Vue.component('schema-result', SchemaResult)
-Vue.component('object-result', ObjectResult)
 Vue.component('list-detail', ListDetail)
 Vue.component('item-list', ItemList)
 Vue.component('item-detail', ItemDetail)
 Vue.component('text-value', TextValue)
 
+Vue.component('kaizen-board', KaizenBoard)
 Vue.component('kanban-board', KanbanBoard)
 Vue.component('kanban-column', KanbanColumn)
 Vue.component('kanban-card', KanbanCard)
