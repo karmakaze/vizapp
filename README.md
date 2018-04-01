@@ -1,81 +1,53 @@
-# kaizenboard
+# kaizenboard - see github issues on a kanban board
 
-> KaizenBoard
+Go to https://kaizenboard.xyz/#/karmakaze/kaizenboard to see issues in repository github.com/karmakaze/kaizenboard.
 
-## Usage
+Click on `↗github` to open an issue in a separate tab. Depending on your browser, the tab/page may be opened in the background.
 
-Navigate to https://kaizenboard.xyz/#/repoOwner/repoName to display issues of repository github.com/repoOwner/repoName.
+Click on the `[+]` at the top of the 'Backlog' column to create a New Issue.
+
+Issue cards can be dragged around but currently do not update. *[**Coming soon**]*
 
 ### Options
 
 If the repo has many issues, each of the Backlog or Archived columms can be collapsed, e.g.
 
-```
-https://kaizenboard.xyz/?backlog=0#/repoOwner/repoName
-https://kaizenboard.xyz/?archived=0#/repoOwner/repoName
-https://kaizenboard.xyz/?backlog=0&archived=0#/repoOwner/repoName
-```
+- https://kaizenboard.xyz/?backlog=0#/karmakaze/kaizenboard
+- https://kaizenboard.xyz/?archived=0#/karmakaze/kaizenboard
+- https://kaizenboard.xyz/?backlog=0&archived=0#/karmakaze/kaizenboard
 
-Clicking on the blank space of the collapsed column expands it.
+Clicking on the blank space of the collapsed column expands it.  
+Right-click on the collapsed word 'BACKLOG' or 'ARCHIVED' to open github issues listed in a new tab.  
+(the 'Archived' issues listed are approximate--doesn't include issues with closed milestones)
 
 
 ## Column classification of Issues
 
-### Backlog
-- `is:open`
-- `no:milestone`
-- `no:assignee`
-
-### Ready
-- `is:open`
-- `no:assignee`
-
-### In-progress
-- `is:open`
-- has `assignee`
-
-### Done
-- `is:closed`
-- does not have `label:archived`
-- `no:milestone` OR `milestone`.`is:open`
-
-### Archived
-- `is:closed`
-- `label:archived` OR `milestone`.`is:closed`
+| Backlog        | Ready         | In‑progress | Done                           | Archived    |
+| -------------- | ------------- | ----------- | ------------------------------ | ----------- |
+| `is:open`      | `is:open`     | `is:open`   | `is:closed`                    | `is:closed` |
+| `no:milestone` | `milestone`   |             | `no:milestone` OR `milestone`.`is:open` | `milestone`.`is:closed` OR `label:archived` |
+| `no:assignee`  | `no:assignee` | `assignee`  | no `label:archived` |             |
 
 The above terminology corresponds to GitHub v3 API for listing issues for a repository: https://developer.github.com/v3/issues/#list-issues-for-a-repository
 
 
 ### Ordering of Issues
 
-Issues with label:@high appear at the top of 'Backlog', 'Ready', and 'In-progress' columns.
-Issues with label:@low appear at the bottom of 'Backlog', 'Ready', and 'In-progress' columns.
-The 'Done' and 'Archived' columns show issues in reverse chronological order.
+- Issues with `label:@high` appear at the top of 'Backlog', 'Ready', and 'In-progress' columns.
+- Issues with `label:@low` appear at the bottom of 'Backlog', 'Ready', and 'In-progress' columns.
+- The 'Done' and 'Archived' columns show issues in reverse chronological order.
 
+### Issue Size Estimates
 
-## Build Setup
+Counting Rod Numerals are shown to reflect size estimate labels as follows:
 
-``` bash
-# install dependencies
-npm install
+𝍠 `label:small`, `label:size-s`*, `label:size-1`
 
-# serve with hot reload at localhost:8080
-npm run dev
+𝍡 `label:medium`, `label:size-m`*, `label:size-2`
 
-# build for production with minification
-npm run build
+𝍢 `label:large`, `label:size-l`*, `label:size-3`
 
-# build for production and view the bundle analyzer report
-npm run build --report
+𝍣 `label:xlarge`, `label:size-x`*, `label:size-4`, `label:size-5`, etc.
 
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+*`*` can have any subsequent characters in label.*
