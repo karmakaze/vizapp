@@ -60,7 +60,7 @@ export default {
         alert("This free version can only display public repositories e.g. https://kaizenboard.xyz/flutter/flutter")
       }
 
-      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all',
+      this.$axios.get('https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all&_=' + Date.now(),
                       { headers: { 'Authorization': authorization },
                         cancelToken: this.search_source.token })
                  .then(response => {
