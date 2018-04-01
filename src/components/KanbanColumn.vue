@@ -48,7 +48,7 @@ export default {
       var accountId = 3
       var projectId = 3
       var className = 'Card'
-      this.$axios.get('http://appdat.info:4123/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
+      this.$axios.get('/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
                       {cancelToken: this.search_source.token})
                  .then(response => { this.cards = response.data })
     },

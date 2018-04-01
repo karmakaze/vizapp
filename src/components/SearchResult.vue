@@ -53,7 +53,7 @@ export default {
         this.search_source = null
       }
       this.search_source = this.$axios.CancelToken.source()
-      this.$axios.get('http://appdat.info:4123/api/objects?account_id=1&project_id=2&class=Title&name=' + name,
+      this.$axios.get('/api/objects?account_id=1&project_id=2&class=Title&name=' + name,
                       {cancelToken: this.search_source.token})
                  .then(response => { this.titles = response.data })
     }

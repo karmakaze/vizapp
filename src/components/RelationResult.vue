@@ -37,7 +37,7 @@ export default {
       }
       this.search_source = this.$axios.CancelToken.source()
       var accountId = this.$route.params.project_id === '3' ? 3 : 1
-      this.$axios.get('http://appdat.info:4123/api/relations/?account_id=' + accountId + '&project_id=' + this.$route.params.project_id,
+      this.$axios.get('/api/relations/?account_id=' + accountId + '&project_id=' + this.$route.params.project_id,
                       {cancelToken: this.search_source.token})
                  .then(response => { this.relations = response.data })
     },

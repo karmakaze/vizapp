@@ -37,7 +37,7 @@ export default {
       var accountId = 1
       var projectId = 4
       var className = 'List'
-      this.$axios.get('http://appdat.info:4123/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
+      this.$axios.get('/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
                       {cancelToken: this.search_source.token})
                  .then(response => { this.lists = response.data })
     }

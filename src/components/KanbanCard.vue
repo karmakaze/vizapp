@@ -160,7 +160,7 @@ export default {
                 {'class': 'Card', 'set': {'next_id': this.id}, 'where': {'next_id': before.id}},
                 {'class': 'Card', 'set': {'next_id': before.id}, 'where': {'id': this.id}}])
       }
-      this.$axios.post('http://appdat.info:4123/api/objects/' + this.card.id + '/changes?project_id=' + projectId + '&status=' + column.fields.show_status + position,
+      this.$axios.post('/api/objects/' + this.card.id + '/changes?project_id=' + projectId + '&status=' + column.fields.show_status + position,
                        {cancelToken: this.search_source.token})
                  .then(response => { this.cards = response.data })
     }

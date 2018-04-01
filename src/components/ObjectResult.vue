@@ -39,7 +39,7 @@ export default {
       this.search_source = this.$axios.CancelToken.source()
       var accountId = 1
       var className = 'Title'
-      this.$axios.get('http://appdat.info:4123/api/objects/?account_id=' + accountId + '&project_id=' + this.$route.params.project_id + '&class=' + className + '&name=' + name,
+      this.$axios.get('/api/objects/?account_id=' + accountId + '&project_id=' + this.$route.params.project_id + '&class=' + className + '&name=' + name,
                       {cancelToken: this.search_source.token})
                  .then(response => { this.classes = response.data })
     },
