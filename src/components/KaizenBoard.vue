@@ -75,7 +75,7 @@ export default {
         }
       }
 
-      var url = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all'
+      var url = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/issues?filter=all&state=all&per_page=100'
       var headers = {}
       if (authorization) {
         headers = { 'Authorization': authorization }
