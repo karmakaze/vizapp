@@ -22,24 +22,28 @@ Clicking on the blank space of the collapsed column expands it.
 ## Column classification of Issues
 
 ### Backlog
-- is:open
-- no:milestone
+- `is:open`
+- `no:milestone`
+- `no:assignee`
 
 ### Ready
-- is:open
-- no:assignee
+- `is:open`
+- `no:assignee`
 
 ### In-progress
-- is:open
-- assignee
+- `is:open`
+- has `assignee`
 
 ### Done
-- is:closed
+- `is:closed`
+- does not have `label:archived`
+- `no:milestone` OR `milestone`.`is:open`
 
 ### Archived
-- label:archived
-OR
-- milestone is:closed
+- `is:closed`
+- `label:archived` OR `milestone`.`is:closed`
+
+The above terminology corresponds to GitHub v3 API for listing issues for a repository: https://developer.github.com/v3/issues/#list-issues-for-a-repository
 
 
 ### Ordering of Issues
@@ -47,6 +51,7 @@ OR
 Issues with label:@high appear at the top of 'Backlog', 'Ready', and 'In-progress' columns.
 Issues with label:@low appear at the bottom of 'Backlog', 'Ready', and 'In-progress' columns.
 The 'Done' and 'Archived' columns show issues in reverse chronological order.
+
 
 ## Build Setup
 
