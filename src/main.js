@@ -10,7 +10,6 @@ import ItemList from '@/components/ItemList'
 import ItemDetail from '@/components/ItemDetail'
 import TextValue from '@/components/TextValue'
 import KaizenBoard from '@/components/KaizenBoard'
-import KanbanBoard from '@/components/KanbanBoard'
 import KanbanColumn from '@/components/KanbanColumn'
 import KanbanCard from '@/components/KanbanCard'
 import ListsCards from '@/components/ListsCards'
@@ -46,7 +45,6 @@ Vue.component('item-detail', ItemDetail)
 Vue.component('text-value', TextValue)
 
 Vue.component('kaizen-board', KaizenBoard)
-Vue.component('kanban-board', KanbanBoard)
 Vue.component('kanban-column', KanbanColumn)
 Vue.component('kanban-card', KanbanCard)
 Vue.component('lists-cards', ListsCards)
