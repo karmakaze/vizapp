@@ -1,6 +1,5 @@
 <template>
   <div style="width: 100%">
-    <div>{{ formatTitle() }}</div>
     <div class="kanban-board" style="width: 100%; display: flex; flex-direction: row;">
       <template v-for="(column, i) of columns">
         <kanban-column :column="column" :add="i == 0 ? newIssueUrl() : ''" :key="column.name" style="flex: 1;"></kanban-column>
@@ -27,6 +26,11 @@ export default {
   data () {
     return {
       columns: []
+    }
+  },
+  watch: {
+    '$route' () {
+      this.load()
     }
   },
   methods: {
