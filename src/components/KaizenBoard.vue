@@ -1,35 +1,45 @@
 <template>
   <div style="width: 100%">
-    <div>Agilean</div>
-    <item-list :items="boards" :keyfield="'fields.name'" :fields="[{'fields.name':'string'}, {'—':'literal'}, {'fields.description':'string'}]"/>
-    <template v-for="board of boards">
-      <kanban-board :board="board" :itemmaxwidth="'500px'" :key="board.id"></kanban-board>
-    </template>
-
-    <div>
-      <hr/>
-      <div style="text-align: center;">Schema</div>
-      <div style="display: inline-block; vertical-align: top;">
-        <schema-result></schema-result>
-      </div>
-      <div style="display: inline-block; vertical-align: top;">
-        <relation-result></relation-result>
-      </div>
+    <div>{{ formatTitle() }}</div>
+    <div class="kanban-board" style="width: 100%; display: flex; flex-direction: row;">
+      <template v-for="(column, i) of columns">
+        <kanban-column :column="column" :add="i == 0 ? newIssueUrl() : ''" :key="column.name" style="flex: 1;"></kanban-column>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(location.hostname)
+function debug (line) {
+  if (isLocalHost) {
+    if (typeof line === 'function') {
+      line = line()
+    }
+    console.log(line)
+  }
+}
+
 export default {
   created () {
     this.load()
   },
   data () {
     return {
-      boards: []
+      columns: []
     }
   },
   methods: {
+    formatTitle () {
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
+      return repoOwner + '/' + repoName
+    },
+    newIssueUrl () {
+      var repoOwner = this.$route.params.repoOwner
+      var repoName = this.$route.params.repoName
+      return 'https://github.com/' + repoOwner + '/' + repoName + '/issues/new'
+    },
     load () {
       if (this.search_source) {
         this.search_source.cancel('cancel search due to newer request')
@@ -138,12 +148,15 @@ export default {
                    })
                    this.dragulaContainers(this)
     },
+    selected (item) {
+      this.selecteditem = item
+    },
     dragulaContainers (vue) {
       setTimeout(() => {
         Object.values(document.querySelectorAll('.kanban-column')).forEach(c => {
           vue.$drake.containers.push(c)
         })
-      }, 200)
+      }, 500)
     }
   }
 }

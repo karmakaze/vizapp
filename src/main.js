@@ -53,9 +53,6 @@ Vue.component('lists-cards', ListsCards)
 Vue.component('lists-card', ListsCard)
 Vue.component('tags', Tags)
 
-new Vue({
-  el: '#app',
-  router,
-  render: h => h(App),
-  components: { App }
-})
+App.router = router
+
+new Vue(App).$mount("#app")
