@@ -145,24 +145,24 @@ export default {
       }
     },
     move: function (column, before) {
-      if (this.move_source) {
-        this.move_source.cancel('cancel search due to newer request')
-        this.move_source = null
-      }
-      this.move_source = this.$axios.CancelToken.source()
-      var projectId = 3
-      // var className = 'Card'
-      var position = ''
-      if (before !== null) {
-        // var beforeRank = before.rank
-        position = '&beforeRank=' + before.number
-        this.update([{'class': 'Card', 'set': {'next_id': this.next_id}, 'where': {'next_id': this.id}},
-                {'class': 'Card', 'set': {'next_id': this.id}, 'where': {'next_id': before.id}},
-                {'class': 'Card', 'set': {'next_id': before.id}, 'where': {'id': this.id}}])
-      }
-      this.$axios.post('/api/objects/' + this.card.id + '/changes?project_id=' + projectId + '&status=' + column.fields.show_status + position,
-                       {cancelToken: this.search_source.token})
-                 .then(response => { this.cards = response.data })
+      // if (this.move_source) {
+      //   this.move_source.cancel('cancel search due to newer request')
+      //   this.move_source = null
+      // }
+      // this.move_source = this.$axios.CancelToken.source()
+      // var projectId = 3
+      // // var className = 'Card'
+      // var position = ''
+      // if (before !== null) {
+      //   // var beforeRank = before.rank
+      //   position = '&beforeRank=' + before.number
+      //   this.update([{'class': 'Card', 'set': {'next_id': this.next_id}, 'where': {'next_id': this.id}},
+      //           {'class': 'Card', 'set': {'next_id': this.id}, 'where': {'next_id': before.id}},
+      //           {'class': 'Card', 'set': {'next_id': before.id}, 'where': {'id': this.id}}])
+      // }
+      // this.$axios.post('/api/objects/' + this.card.id + '/changes?project_id=' + projectId + '&status=' + column.fields.show_status + position,
+      //                  {cancelToken: this.search_source.token})
+      //            .then(response => { this.cards = response.data })
     }
   }
 }

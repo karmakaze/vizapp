@@ -40,17 +40,17 @@ export default {
       location.href = location.href.replace(columnParam + '=0', columnParam + '=1')
     },
     search (column) {
-      if (this.search_source) {
-        this.search_source.cancel('cancel search due to newer request')
-        this.search_source = null
-      }
-      this.search_source = this.$axios.CancelToken.source()
-      var accountId = 3
-      var projectId = 3
-      var className = 'Card'
-      this.$axios.get('/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
-                      {cancelToken: this.search_source.token})
-                 .then(response => { this.cards = response.data })
+      // if (this.search_source) {
+      //   this.search_source.cancel('cancel search due to newer request')
+      //   this.search_source = null
+      // }
+      // this.search_source = this.$axios.CancelToken.source()
+      // var accountId = 3
+      // var projectId = 3
+      // var className = 'Card'
+      // this.$axios.get('/api/objects/?account_id=' + accountId + '&project_id=' + projectId + '&class=' + className,
+      //                 {cancelToken: this.search_source.token})
+      //            .then(response => { this.cards = response.data })
     },
     selected (item) {
       this.selecteditem = item
