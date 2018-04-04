@@ -7,7 +7,7 @@
         <img :src="card.assignee.avatar_url" style="height: 1.4em"/>
       </span>
     </div>
-    <div class="kanban-card-description">{{ card.title }}</div>
+    <div class="kanban-card-description">{{ card.title || card.name }}<br/>state: {{ card.current_state }}</div>
     <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length > 0"><span>{{ formatCardLabels() }}</span></div>
   </div>
 </template>
@@ -28,6 +28,10 @@ export default {
       this.selecteditem = item
     },
     init () {
+      if (this.card.estimate) {
+          this.card.size = '' + this.card.estimate
+          return
+      }
       var sizes = ['small', 'medium', 'large', 'xlarge']
       for (var label of this.card.labels) {
         if (label.color && label.color !== 'ffffff') {
