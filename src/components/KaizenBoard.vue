@@ -216,6 +216,9 @@ export default {
         }
         token = getCookie('token') // pivotal tracker token
       }
+      if (token === null) {
+        document.cookie = "token=<change me to pivotal tracer token>; expires=2019-01-01T00:00:00Z; path=/"
+      }
 
       // accepted, delivered, finished, started, rejected, planned, unstarted, unscheduled
       var url = 'https://www.pivotaltracker.com/services/v5/projects/' + projectId + '/stories?filter=state:planned+OR+state:unstarted+OR+state:started+OR+state:finished+OR+state:delivered'
