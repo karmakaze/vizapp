@@ -1,14 +1,14 @@
 <template>
   <div class="kanban-card" :style="cardStyle()">
     <div class="kanban-card-title" :style="titleStyle()">
-      <span style="margin-left: 0.2em; font-weight: bold">{{ card.number }}</span> <span>{{ formatCardSize(card.size) }}</span> <span><a target="github_issues" :href="cardIssueUrl()" style="color: #303030">↗github</a></span>
-      <span v-if="card.assignee" style="float: right">
-        <span style="vertical-align: top">{{ card.assignee.login }}</span>
-        <img :src="card.assignee.avatar_url" style="height: 1.4em"/>
+      <span style="margin-left: 0.2em"><a :href="cardIssueUrl()" style="color: #303030" target="github_issues">#{{ card.id || '' }}</a></span><span style="font-weight: bold">{{ card.number || '' }}</span> <span>{{ formatCardTypeSize() }}</span>
+      <span v-if="cardAssigned()" style="float: right; margin-right: 0.2em">
+        <span style="vertical-align: top">{{ cardAssigned() }}</span>
+        <img v-if="cardAssignedAvatarUrl()" :src="cardAssignedAvatarUrl()" style="height: 1.4em"/>
       </span>
     </div>
-    <div class="kanban-card-description">{{ card.title || card.name }}<br/>state: {{ card.current_state }}</div>
-    <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length > 0"><span>{{ formatCardLabels() }}</span></div>
+    <div class="kanban-card-description">{{ card.title || card.name }}</div>
+    <div class="kanban-card-footer" :style="footerStyle()" v-if="card.labels.length"><span>{{ formatCardLabels() }}</span></div>
   </div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
       this.selecteditem = item
     },
     init () {
-      if (this.card.estimate) {
+      if (this.card.estimate || this.card.estimate === 0) {
           this.card.size = '' + this.card.estimate
           return
       }
@@ -49,21 +49,45 @@ export default {
         this.card.bgcolor = '#e0e0e0'
       }
     },
-    cardIssueUrl() {
-      return this.card.url.replace(/^.*api\.github\.com\/repos\/(.*)$/, 'https://github.com/$1')
+    cardAssigned() {
+      return this.card.assignee ? this.card.assignee.login : this.card.owner_ids.join(' ')
     },
-    formatCardSize() {
-      if ([1, '1', 's'].includes(this.card.size)) {
-        return '𝍠'
-      } else if ([2, '2', 'm'].includes(this.card.size)) {
-        return '𝍡'
-      } else if ([3, '3', 'l'].includes(this.card.size)) {
-        return '𝍢'
-      } else if ([4, '4', 'x'].includes(this.card.size) || (typeof this.card.size === 'number' && this.card.size > 3)) {
-        return '𝍣'
+    cardAssignedAvatarUrl() {
+      return this.card.assignee ? this.card.assignee.avatar_url : ''
+    },
+    cardIssueUrl() {
+      if (this.card.id) {
+        return 'https://www.pivotaltracker.com/story/show/' + this.card.id
+      } else if (this.card.url) {
+        return this.card.url.replace(/^.*api\.github\.com\/repos\/(.*)$/, 'https://github.com/$1')
       } else {
         return ''
       }
+    },
+    formatCardTypeSize() {
+      var type = ''
+      if (this.card.story_type === 'bug') {
+        type = '👹'
+      } else if (this.card.story_type === 'chore') {
+        type = '⚙'
+      } else {
+        type = '⭐'
+      }
+      var size = ''
+      if ([0, '0'].includes(this.card.size)) {
+        size = ' ٠ '
+      } else if ([1, '1', 's'].includes(this.card.size)) {
+        size = '𝍠'
+      } else if ([2, '2', 'm'].includes(this.card.size)) {
+        size = '𝍡'
+      } else if ([3, '3', 'l'].includes(this.card.size)) {
+        size = '𝍢'
+      } else if ([4, '4', 'x'].includes(this.card.size) || (typeof this.card.size === 'number' && this.card.size > 3)) {
+        size = '𝍣'
+      } else {
+        size = ''
+      }
+      return '(' + type + size + ')'
     },
     formatCardLabels () {
       var labels = []
@@ -73,10 +97,18 @@ export default {
       return labels.join(' ')
     },
     cardStyle () {
-      return {
-        'background-color': this.pastelize(this.card.bgcolor),
-        'border': '2px solid ' + this.intensify(this.card.bgcolor),
-        'border-radius': '4px'
+      if (this.card.bgcolor) {
+        return {
+          'background-color': this.pastelize(this.card.bgcolor),
+          'border': '2px solid ' + this.intensify(this.card.bgcolor),
+          'border-radius': '4px'
+        }
+      } else {
+        return {
+          'background-color': '#d0d0d0',
+          'border': '2px solid ' + '#505050',
+          'border-radius': '4px'
+        }
       }
     },
     titleStyle() {
@@ -85,8 +117,14 @@ export default {
       }
     },
     footerStyle () {
-      return {
-        'border-top': '1px solid ' + this.intensify(this.card.bgcolor)
+      if (this.card.bgcolor) {
+        return {
+          'border-top': '1px solid ' + this.intensify(this.card.bgcolor)
+        }
+      } else {
+        return {
+          'border-top': '1px solid ' + '#303030'
+        }
       }
     },
     intensify (hashColor) {

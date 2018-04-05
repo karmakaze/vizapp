@@ -218,7 +218,7 @@ export default {
       }
 
       // accepted, delivered, finished, started, rejected, planned, unstarted, unscheduled
-      var url = 'https://www.pivotaltracker.com/services/v5/projects/' + projectId + '/stories?filter=state:unstarted+OR+state:planned+OR+state:unstarted+OR+state:started+OR+state:finished+OR+state:delivered+OR+state:accepted+OR+state:rejected'
+      var url = 'https://www.pivotaltracker.com/services/v5/projects/' + projectId + '/stories?filter=state:planned+OR+state:unstarted+OR+state:started+OR+state:finished+OR+state:delivered'
       var headers = {}
       if (token) {
         headers = { 'X-TrackerToken': token }
@@ -230,12 +230,12 @@ export default {
                     var issues = response.data
                     var backlogIssues = []
                     var unstartedIssues = []
-                    var assignedIssues = []
-                    var startedIssues = []
-                    var closedIssues = []
-                    var milestoneIssues = []
+                    var readyIssues = []
+                    var inProgressIssues = []
+                    var doneIssues = []
                     var archivedIssues = []
                     for (var issue of issues) {
+                      if (token) {
                       debug(() => {
                         var lines = []
                         lines.push('ISSUE')
@@ -251,34 +251,28 @@ export default {
                         lines.push('')
                         return lines.join('  |')
                       })
+                      }
+
+                      // debug(issue.current_state + ' #' + issue.id + ' (' + issue.estimate + ') ' + issue.name)
+                      if (issue.story_type === 'release') {
+                        continue
+                      }
 
                       if (['accepted', 'rejected'].includes(issue.current_state)) {
-                          archivedIssues.push(issue)
+                        archivedIssues.push(issue)
                       } else if (['finished', 'delivered'].includes(issue.current_state)) {
-                        closedIssues.push(issue)
+                        doneIssues.push(issue)
                       } else if (issue.current_state === 'unstarted') {
                         if (issue.owner_ids.length) {
-                          assignedIssues.push(issue)
+                          readyIssues.push(issue)
                         } else {
                           unstartedIssues.push(issue)
                         }
                       } else if (issue.current_state === 'started') {
-                        startedIssues.push(issue)
-                      } else if (issue.milestone) {
-                        if (issue.milestone.state === 'closed') {
-                          archivedIssues.push(issue)
-                        } else if (issue.milestone.title in milestoneIssues) {
-                          milestoneIssues[issue.milestone.title].push(issue)
-                        } else {
-                          milestoneIssues[issue.milestone.title] = [issue]
-                        }
+                        inProgressIssues.push(issue)
                       } else {
                         backlogIssues.push(issue)
                       }
-                    }
-                    var readyIssues = []
-                    for (var milestoneTitle of Object.keys(milestoneIssues).sort()) {
-                      readyIssues.push(...milestoneIssues[milestoneTitle])
                     }
 
                     var priortize = function(issues) {
@@ -314,15 +308,15 @@ export default {
                       },
                       { name: 'Ready',
                         collapsed: false,
-                        cards: priortize(assignedIssues)
+                        cards: priortize(readyIssues)
                       },
                       { name: 'In-progress',
                         collapsed: false,
-                        cards: priortize(startedIssues)
+                        cards: priortize(inProgressIssues)
                       },
                       { name: 'Done',
                         collapsed: false,
-                        cards: priortize(closedIssues)
+                        cards: priortize(doneIssues)
                       },
                       { name: 'Archived',
                         collapsed: query.archived === '0' ? this.archivedIssuesUrl() : false,
