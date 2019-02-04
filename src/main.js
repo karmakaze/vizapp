@@ -3,18 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import SearchBar from '@/components/SearchBar'
-import SearchResult from '@/components/SearchResult'
-import ListDetail from '@/components/ListDetail'
-import ItemList from '@/components/ItemList'
-import ItemDetail from '@/components/ItemDetail'
-import TextValue from '@/components/TextValue'
-import KaizenBoard from '@/components/KaizenBoard'
-import KanbanColumn from '@/components/KanbanColumn'
-import KanbanCard from '@/components/KanbanCard'
-import ListsCards from '@/components/ListsCards'
-import ListsCard from '@/components/ListsCard'
-import Tags from '@/components/Tags'
+import TypeItems from '@/components/TypeItems'
 
 import axios from 'axios'
 import dragula from 'dragula'
@@ -37,19 +26,7 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 
-Vue.component('search-bar', SearchBar)
-Vue.component('search-result', SearchResult)
-Vue.component('list-detail', ListDetail)
-Vue.component('item-list', ItemList)
-Vue.component('item-detail', ItemDetail)
-Vue.component('text-value', TextValue)
-
-Vue.component('kaizen-board', KaizenBoard)
-Vue.component('kanban-column', KanbanColumn)
-Vue.component('kanban-card', KanbanCard)
-Vue.component('lists-cards', ListsCards)
-Vue.component('lists-card', ListsCard)
-Vue.component('tags', Tags)
+Vue.component('type-items', TypeItems)
 
 App.router = router
 

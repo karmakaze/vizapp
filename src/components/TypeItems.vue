@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h4>Items of type {{ type }}</h4>
+    <h4>Items of type {{ type() }}</h4>
     <ul>
       <template v-for="item of items">
-        <li :key="item.id">{{ item.name }}</li>
+        <li :key="item.id" v-html="itemText(item)"/>
       </template>
     </ul>
   </div>
@@ -17,15 +17,22 @@ export default {
   },
   data() {
     return {
-      type: '',
       items: []
     }
   },
   methods: {
+    type() {
+      return this.$route.params.type || 'category'
+    },
+    itemText(item) {
+      if (this.type() === 'category') {
+        return `<a href="/#/types/${item.name}/items">${item.name}</a>`
+      }
+      return item.name
+    },
     load() {
       let xhr = new XMLHttpRequest()
-      this.type = this.$route.params.type
-      let url = `https://items.ispecsdb.com/types/${this.type}/items`
+      let url = `https://items.ispecsdb.com/types/${this.type()}/items`
       xhr.open('GET', url)
       xhr.onload = () => {
         if (xhr.status === 200 && xhr.responseText) {
